@@ -1,35 +1,32 @@
+const { timestamp } = require('joi/lib/types/date');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const ticket = new Schema({
-    passengerName:{
+    name:{
         type: String,
-        requiredPaths: true
+        required: true
     },
-    nidCard:{
+    idCard:{
         type: Number,
-        requiredPaths: true
+        required: true
     },
     phone: {
         type: Number,
-        requiredPaths: true
+        required: true
     },
     email: {
         type: String,
-        requiredPaths: true
+        required: true
     },
     seat:{
         type: Number,
         required: Boolean,
     },
 
-    busNumber:{
-        type: String,
-        require: true
-    },
-    currentDate:{
+    date:{
         type: Date
     }
-})
+}, {timestamp: true})
 
 const passenTicket = mongoose.model('ticket', ticket);
 

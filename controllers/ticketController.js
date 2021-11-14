@@ -1,31 +1,43 @@
 const Ticket = require('../models/ticket');
 const express = require('express');
-const router = express.Router()
+const { ticketValidation } = require('../controllers/users');
+const router = express.Router();
 
+router.post('/add', async (req, res) =>{
 
-router.post( '/',(req, res, next) =>{
+    const { error } = ticketValidation(req.body);
+
+    if(error){
+        return res.status(400).send(error.details[0].message)
+    }
+
     let tickets = new Ticket({
-        passengerName: req.body.passengerName,
-        nidCard: req.body.nidCard,
+        name: req.body.name,
+        idCard: req.body.idCard,
         phone: req.body.phone,
         email: req.body.email,
         seat: req.body.seat,
-        busNumber: req.body.busNumber,
-        currentDate: req.body.date
+        date: req.body.date
     })
 
-    tickets.save().then(message => {
-        res.json({
-            message: "thanks for using our service"
-        }).catch(err => {
-            if(err){
+    try{
+        const ticket = await tickets.save();
 
-                res.json({
-                    message: 'sorry please something went wron'
-                })
-            }
-        })
+        res.status(200).send(ticket)
+    } catch(error){
+        res.status(501).send(error)
+    }
+})
+
+router.get('/get', (req, res) =>{
+    Ticket.find((err, data) =>{
+        if(!err){
+            res.status(200).send(data)
+        }else {
+            console.log(`sorry something went wrong: ` + JSON.stringify(err, undefined, 2));
+        }
     })
 })
+
 
 module.exports = router

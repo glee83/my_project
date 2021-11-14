@@ -3,6 +3,7 @@ const session = require('express-session');
 const passport = require('passport');
 const mongoose = require('mongoose');
 const authRoute = require('./routes/users');
+const ticketRoute = require('./controllers/ticketController');
 const messageRoute = require('./controllers/contactUs');
 const dotenv = require('dotenv');
 const cors = require('cors')
@@ -25,7 +26,7 @@ db.once('open', () =>{
 })
 
 app.use(cors({
-    origin: ['http://localhost:4200', 'http://127.0.0.1:4200'],
+    origin: ['http://localhost:4300', 'http://127.0.0.1:4300'],
     credentials: true
 }))
 
@@ -52,6 +53,7 @@ app.use(express.json());
 //routes
 
 app.use('/api/messages', messageRoute)
+app.use('/api/ticket', ticketRoute);
 app.use('/api', authRoute);
 
 app.get('/', (req, res) =>{

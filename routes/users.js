@@ -3,12 +3,10 @@ const router = express.Router();
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const password = require('passport');
+
 const dotenv = require('dotenv')
-const verifyUser = require('../routes/verifyUser')
-const contactController = require('../controllers/contactUs');
 const {registerValidation, loginValidation} = require('../controllers/users');
-const ticketRoute = require('../controllers/ticketController')
+
 
 
 dotenv.config();
@@ -37,12 +35,16 @@ router.post('/register', async(req,res) =>{
         phone: req.body.phone,
         email: req.body.email,
         password: hashedPass
-    }); try {
-        const saveUser = await user.save();
-        return res.status(201).json(saveUser)
-    } catch (err){
-        return res.status(501).json(err);
-    }
+    });
+
+    user.save((error, registeredUser) => {
+        if(error){
+            console.log(error)
+        }else{
+            let token = jwt.sign({_id: registeredUser._id}, process.env.TOKEN_SECRET);
+             res.status(200).send(token);
+        }
+    })
     
 });
 
@@ -54,22 +56,12 @@ router.post('/login',  async (req, res)=>{
     if(error){
         return res.status(400).send(error.details[0].message)
     }
-
-    passport.authenticate('local', function(err, user, info) {
-        if (err) { return res.status(501).json(err); }
-        if (!user) { return res.status(501).json(info); }
-        req.logIn(user, function(err) {
-          if (err) { return res.status(501).json(err); }
-          return res.status(200).j;
-        });
-    })(req, res, next);
-
     // check if the email exists
 
-    // const user = await User.findOne({email: req.body.email});
-    // if(!user){
-    //     return res.status(400).send('Email didnt match')
-    // }
+    const user = await User.findOne({email: req.body.email});
+    if(!user){
+        return res.status(400).send('Email didnt match')
+    }
     
     // compare password
 
@@ -81,7 +73,7 @@ router.post('/login',  async (req, res)=>{
     // assign a token 
 
     const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET)
-    res.header('auth-token', token).send(token)
+    res.status(200).send(token)
     // res.send('Logged In!')
 });
 
