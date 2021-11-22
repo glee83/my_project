@@ -46,10 +46,25 @@ const ticketValidation = data =>{
 
     return Joi.validate(data, ticket);
 }
+const addTicketValidation = data =>{
+    let addTicket = {
+        departure: Joi.string().required(),
+        destination: Joi.string().required(),
+        departure_time: Joi.string().required(),
+        bus_type: Joi.string().required(),
+        amount: Joi.number().required(),
+        plate_num: Joi.string().required(),
+        seat: Joi.number().required(),
+        date: Joi.string().required()
+    };
+
+    return Joi.validate(data, addTicket);
+}
 
 module.exports.registerValidation = registerValidation
 module.exports.loginValidation = loginValidation
 module.exports.contactUsValidation = contactUsValidation
 module.exports.ticketValidation = ticketValidation
+module.exports.addTicketValidation = addTicketValidation
 
 

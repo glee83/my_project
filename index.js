@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const authRoute = require('./routes/users');
 const ticketRoute = require('./controllers/ticketController');
 const messageRoute = require('./controllers/contactUs');
+const addTicketRoute = require('./controllers/addTicketController')
 const dotenv = require('dotenv');
 const cors = require('cors')
 const app = express();
@@ -55,6 +56,7 @@ app.use(express.json());
 app.use('/api/messages', messageRoute)
 app.use('/api/ticket', ticketRoute);
 app.use('/api', authRoute);
+app.use('/api/ticket', addTicketRoute)
 
 app.get('/', (req, res) =>{
     res.send('Hello, world');
